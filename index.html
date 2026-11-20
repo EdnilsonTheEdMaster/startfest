@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0A0A0A" />
+    <meta
+      name="description"
+      content="Descubra festas e eventos com a StartFest. Encontre sua próxima noite e coloque seu nome na lista."
+    />
+    <link rel="icon" type="image/png" sizes="256x256" href="/favicon.png" />
+    <title>StartFest — A noite começa aqui</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="site-header">
+        <a class="brand" href="#" aria-label="StartFest, página inicial">
+          <img src="/startfest-logo.jpeg" alt="" width="42" height="42" />
+          <span>Start<span class="brand-accent">Fest</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Navegação principal">
+          <a href="#eventos">Eventos</a>
+          <a href="#sobre">Sobre</a>
+        </nav>
+        <a class="header-cta" href="#eventos">Encontrar uma festa <span aria-hidden="true">↗</span></a>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> A cidade não para</p>
+            <h1 id="hero-title">A noite começa<br />com uma boa <span>lista.</span></h1>
+            <p class="hero-description">
+              As melhores festas, pessoas e histórias começam por aqui. Escolha seu próximo rolê.
+            </p>
+            <a class="button button-primary hero-button" href="#eventos">Ver próximos eventos <span aria-hidden="true">↓</span></a>
+            <div class="hero-footnote">
+              <span class="sparkle" aria-hidden="true">✳</span>
+              <span>Seu próximo momento favorito está a um convite de distância.</span>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="hero-orbit hero-orbit-one"></div>
+            <div class="hero-orbit hero-orbit-two"></div>
+            <img class="hero-logo" src="/startfest-logo.jpeg" alt="" />
+            <div class="hero-art-label hero-art-label-top">VIVA A NOITE</div>
+            <div class="hero-art-label hero-art-label-bottom">START SOMETHING</div>
+            <div class="hero-art-spark hero-art-spark-one">✦</div>
+            <div class="hero-art-spark hero-art-spark-two">✳</div>
+          </div>
+          <div class="hero-bottom-line" aria-hidden="true"></div>
+        </section>
+
+        <section class="events-section" id="eventos" aria-labelledby="events-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Escolha seu próximo rolê</p>
+              <h2 id="events-title">Próximos eventos<span class="heading-period">.</span></h2>
+            </div>
+            <p class="section-aside"><span class="sparkle" aria-hidden="true">✳</span> Feito pra viver junto</p>
+          </div>
+
+          <p class="demo-notice" id="demo-notice" hidden>
+            Programação demonstrativa. Conecte o Supabase para publicar os eventos oficiais.
+          </p>
+          <p class="events-status" id="events-status" role="status" aria-live="polite"></p>
+          <div class="event-grid" id="event-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="manifesto" id="sobre" aria-labelledby="manifesto-title">
+          <div class="manifesto-mark" aria-hidden="true">✳</div>
+          <div>
+            <p class="eyebrow">Mais do que sair</p>
+            <h2 id="manifesto-title">É sobre tudo que acontece <span>quando a gente se encontra.</span></h2>
+          </div>
+          <p class="manifesto-note">Descubra. Convide. Viva.</p>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <a class="brand footer-brand" href="#" aria-label="StartFest, página inicial">
+          <img src="/startfest-logo.jpeg" alt="" width="34" height="34" />
+          <span>Start<span class="brand-accent">Fest</span></span>
+        </a>
+        <p>Encontre seu lugar na noite.</p>
+        <span class="footer-copyright">© <span id="current-year"></span> StartFest</span>
+      </footer>
+    </div>
+
+    <dialog class="signup-dialog" id="signup-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-shell">
+        <button class="dialog-close" type="button" aria-label="Fechar formulário">×</button>
+        <p class="eyebrow">Garanta seu lugar</p>
+        <h2 id="dialog-title">Entrar na lista</h2>
+        <p class="dialog-event" id="dialog-event"></p>
+        <form id="guest-list-form">
+          <div class="guest-list-heading">
+            <span>Quem vai com você?</span>
+            <button class="add-guest-button" id="add-guest" type="button">+ Adicionar pessoa</button>
+          </div>
+          <div class="guest-rows" id="guest-rows"></div>
+          <div class="honeypot" aria-hidden="true">
+            <label>Deixe este campo vazio<input name="website" tabindex="-1" autocomplete="off" /></label>
+          </div>
+          <label class="consent-label">
+            <input id="consent" name="consent" type="checkbox" required />
+            <span>Autorizo o uso dos nomes informados para organizar a lista deste evento. <a href="#privacidade">Saiba mais</a>.</span>
+          </label>
+          <p class="privacy-note" id="privacidade">Não pedimos telefone ou e-mail. Os dados ficam restritos ao evento e à equipe autorizada.</p>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          <button class="button button-primary submit-button" id="submit-button" type="submit">Confirmar presença <span aria-hidden="true">↗</span></button>
+        </form>
+      </div>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

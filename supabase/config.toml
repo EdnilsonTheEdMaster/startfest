@@ -1,0 +1,2 @@
+[functions.submit-guest-list]
+verify_jwt = false
