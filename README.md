@@ -28,7 +28,25 @@ The Pages workflow builds the site on pushes to `main` and the StartFest feature
 
 A função valida cada pessoa, exige consentimento, limita listas a dez pessoas e aplica limite de envios por janela usando um identificador HMAC do IP. Escritas são atômicas e acessíveis somente à função com a chave de serviço; o navegador nunca recebe essa chave. RLS permite leitura pública apenas de eventos publicados e reserva os dados pessoais da lista aos usuários autenticados cujo `app_metadata.role` seja `admin`.
 
-As tabelas `guest_list_submissions` e `guest_list_entries` separam cada envio de seus convidados e permitem agregações futuras por evento e tipo de entrada. O MVP não inclui painel administrativo nem dados de contato dos convidados. Até existir um painel, pessoas autorizadas podem cadastrar eventos pelo Table Editor do Supabase: informe título, slug único, local, bairro (ou `Não informado`), início com fuso horário, descrição, categoria e status `published`. O campo `image_url` aceita um caminho relativo a `public/` ou uma URL HTTPS pública; a imagem precisa estar publicada antes de cadastrar o caminho. Eventos são ocultados e deixam de aceitar inscrições no horário de início, sem serem excluídos do banco.
+As tabelas `guest_list_submissions` e `guest_list_entries` separam cada envio de seus convidados e permitem agregações futuras por evento e tipo de entrada. Não são coletados dados de contato dos convidados. Eventos são ocultados e deixam de aceitar inscrições no horário de início, sem serem excluídos do banco.
+
+## Administração
+
+1. Aplique todas as migrations pendentes no projeto vinculado: `npx supabase db push --remote`. A migration administrativa cria o bucket público `event-posters`, restringe uploads a administradores e permite que eles editem ou excluam convidados. Eventos são retirados da agenda por cancelamento, sem apagar seu histórico.
+2. No Supabase, em **Authentication > Users**, crie o usuário com e-mail e senha. Pelo SQL Editor, atualize **somente o usuário desejado** com o papel administrativo, substituindo o endereço abaixo e verificando que uma única linha foi alterada:
+
+   ```sql
+   update auth.users
+   set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
+   where email = 'admin@example.com';
+   ```
+
+   Use `app_metadata`, nunca `user_metadata`: usuários comuns podem alterar seus próprios `user_metadata`. O administrador deve sair e entrar novamente para atualizar o token após mudança de papel. Proteja a conta e não compartilhe a senha.
+3. Publique o build e acesse `admin.html` pelo link Administração no rodapé. Entre com a conta configurada. O cliente usa a URL e chave pública do projeto; a autorização é aplicada no banco e no Storage, não por uma chave de serviço no navegador.
+4. Em **Novo evento**, informe os dados e selecione uma imagem JPEG, PNG ou WebP de até 5 MB. Escolha **Publicado** para aparecer na agenda, **Rascunho** para manter privado ou **Cancelado** para ocultar. Datas são informadas no horário de Brasília (UTC−03:00); horários futuros devem ser revisados caso o fuso ou horário de verão mude. Ao substituir uma imagem, a anterior permanece no Storage até uma limpeza administrativa deliberada.
+5. Em **Ver lista**, consulte, corrija ou exclua convidados individualmente. Exclusões de convidados são permanentes; retirar um evento da agenda preserva as inscrições. Para encaminhar a lista, escolha **Preparar e-mail**, informe o destinatário e anexe manualmente o CSV baixado no aplicativo de e-mail antes de enviar. O site não envia e-mails automaticamente nem confirma a entrega. Confira o destinatário antes de compartilhar dados pessoais.
+
+O bucket de cartazes é público, portanto não envie documentos pessoais ou imagens privadas. CSVs baixados contêm dados pessoais: mantenha-os protegidos e descarte-os quando não forem mais necessários. Limpeza de imagens antigas no Storage não deve remover cartazes ainda usados por eventos.
 
 ## Conteúdo e identidade visual
 
