@@ -17,12 +17,12 @@ npm run build
 
 ## GitHub Pages
 
-The Pages workflow builds the site on pushes to `main` and the StartFest feature branch, and on pull requests it runs the build without deploying. In the repository settings, choose **Settings > Pages > Build and deployment > Source: GitHub Actions**. The production build uses the `/startfest/` base path; local development keeps `/`. The page works with demo events until the public Supabase URL and anon key are configured.
+The Pages workflow builds the site on pushes to `main` and the StartFest feature branch, and on pull requests it runs the build without deploying. In the repository settings, choose **Settings > Pages > Build and deployment > Source: GitHub Actions**. Add the Supabase project URL as the `VITE_SUPABASE_URL` Actions repository variable, and add its public anon key as the `VITE_SUPABASE_ANON_KEY` Actions repository secret under **Settings > Secrets and variables > Actions**. The production build uses the `/startfest/` base path; local development keeps `/`. The page works with demo events until those settings are configured.
 
 ## Supabase
 
 1. Aplique a migration em `supabase/migrations/20261120120000_create_event_guest_lists.sql`.
-2. Configure os segredos da função `submit-guest-list`: `SUPABASE_SERVICE_ROLE_KEY`, `RATE_LIMIT_SECRET` (segredo aleatório) e `ALLOWED_ORIGINS` (origens exatas separadas por vírgula, sem curingas).
+2. Configure os segredos da função `submit-guest-list`: `SUPABASE_SERVICE_ROLE_KEY`, `RATE_LIMIT_SECRET` (segredo aleatório) e `ALLOWED_ORIGINS=https://ednilsontheedmaster.github.io,http://localhost:5173` (origens exatas separadas por vírgula, sem curingas).
 3. Implante a função com `supabase functions deploy submit-guest-list`.
 4. Configure as mesmas origens permitidas para a URL de produção do site; em desenvolvimento, inclua a origem local usada pelo Vite.
 
