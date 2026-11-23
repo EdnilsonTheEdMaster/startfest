@@ -422,6 +422,24 @@ h3 {
     linear-gradient(145deg, #1b2c21, #101512 74%);
 }
 
+.event-poster--image {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  background: #0a0a0a;
+}
+
+.event-poster--image::before,
+.event-poster--image::after {
+  display: none;
+}
+
+.event-poster-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .event-poster::before,
 .event-poster::after {
   position: absolute;
@@ -866,6 +884,10 @@ h3 {
   .event-poster {
     min-height: 250px;
   }
+
+  .event-poster--image {
+    min-height: 0;
+  }
 }
 
 @media (max-width: 640px) {
@@ -964,6 +986,11 @@ h3 {
   .event-poster {
     min-height: 250px;
     padding: 25px;
+  }
+
+  .event-poster--image {
+    min-height: 0;
+    padding: 0;
   }
 
   .poster-title {

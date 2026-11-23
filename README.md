@@ -22,13 +22,13 @@ The Pages workflow builds the site on pushes to `main` and the StartFest feature
 ## Supabase
 
 1. Aplique a migration em `supabase/migrations/20261120120000_create_event_guest_lists.sql`.
-2. Configure os segredos da função `submit-guest-list`: `SUPABASE_SERVICE_ROLE_KEY`, `RATE_LIMIT_SECRET` (segredo aleatório) e `ALLOWED_ORIGINS=https://ednilsontheedmaster.github.io,http://localhost:5173` (origens exatas separadas por vírgula, sem curingas).
+2. Configure os segredos da função `submit-guest-list`: `RATE_LIMIT_SECRET` (segredo aleatório) e `ALLOWED_ORIGINS=https://ednilsontheedmaster.github.io,http://localhost:5173` (origens exatas separadas por vírgula, sem curingas). O Supabase fornece `SUPABASE_SERVICE_ROLE_KEY` automaticamente à função; ela nunca deve ser publicada no site.
 3. Implante a função com `supabase functions deploy submit-guest-list`.
 4. Configure as mesmas origens permitidas para a URL de produção do site; em desenvolvimento, inclua a origem local usada pelo Vite.
 
 A função valida cada pessoa, exige consentimento, limita listas a dez pessoas e aplica limite de envios por janela usando um identificador HMAC do IP. Escritas são atômicas e acessíveis somente à função com a chave de serviço; o navegador nunca recebe essa chave. RLS permite leitura pública apenas de eventos publicados e reserva os dados pessoais da lista aos usuários autenticados cujo `app_metadata.role` seja `admin`.
 
-As tabelas `guest_list_submissions` e `guest_list_entries` separam cada envio de seus convidados e permitem agregações futuras por evento e tipo de entrada. O MVP não inclui painel administrativo nem dados de contato dos convidados.
+As tabelas `guest_list_submissions` e `guest_list_entries` separam cada envio de seus convidados e permitem agregações futuras por evento e tipo de entrada. O MVP não inclui painel administrativo nem dados de contato dos convidados. Até existir um painel, pessoas autorizadas podem cadastrar eventos pelo Table Editor do Supabase: informe título, slug único, local, bairro (ou `Não informado`), início com fuso horário, descrição, categoria e status `published`. O campo `image_url` aceita um caminho relativo a `public/` ou uma URL HTTPS pública; a imagem precisa estar publicada antes de cadastrar o caminho. Eventos são ocultados e deixam de aceitar inscrições no horário de início, sem serem excluídos do banco.
 
 ## Conteúdo e identidade visual
 

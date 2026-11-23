@@ -3,11 +3,12 @@ export interface EventListing {
   slug: string;
   title: string;
   venue: string;
-  neighborhood: string;
+  neighborhood: string | null;
   startsAt: string;
   endsAt: string | null;
   description: string;
   category: string;
+  imageUrl?: string | null;
 }
 
 export const demoEvents: EventListing[] = [

@@ -81,15 +81,31 @@ function createEventCard(event: EventListing, index: number): HTMLElement {
 
   const poster = document.createElement("div");
   poster.className = "event-poster";
-  poster.setAttribute("aria-label", `Arte abstrata para ${event.title}`);
-  poster.setAttribute("role", "img");
-  poster.append(
-    createTextElement("span", "poster-kicker", event.category.toUpperCase()),
-    createTextElement("span", "poster-title", event.title),
-    createTextElement("span", "poster-brand", "STARTFEST ✳"),
-  );
-  const posterDate = createTextElement("span", "poster-date", formatEventDate(event.startsAt));
-  poster.append(posterDate);
+  const renderFallbackPoster = () => {
+    poster.classList.remove("event-poster--image");
+    poster.setAttribute("aria-label", `Arte abstrata para ${event.title}`);
+    poster.setAttribute("role", "img");
+    poster.replaceChildren(
+      createTextElement("span", "poster-kicker", event.category.toUpperCase()),
+      createTextElement("span", "poster-title", event.title),
+      createTextElement("span", "poster-brand", "STARTFEST ✳"),
+    );
+    poster.append(createTextElement("span", "poster-date", formatEventDate(event.startsAt)));
+  };
+  if (event.imageUrl) {
+    const image = document.createElement("img");
+    image.className = "event-poster-image";
+    image.alt = `Cartaz de ${event.title}`;
+    image.loading = "lazy";
+    image.addEventListener("error", renderFallbackPoster, { once: true });
+    image.src = event.imageUrl.startsWith("https://")
+      ? event.imageUrl
+      : `${import.meta.env.BASE_URL}${event.imageUrl.replace(/^\/+/, "")}`;
+    poster.classList.add("event-poster--image");
+    poster.append(image);
+  } else {
+    renderFallbackPoster();
+  }
 
   const details = document.createElement("div");
   details.className = "event-details";
@@ -97,10 +113,10 @@ function createEventCard(event: EventListing, index: number): HTMLElement {
   meta.className = "event-meta";
   meta.append(
     createTextElement("span", "event-category", event.category),
-    createTextElement("span", "event-time", formatEventTime(event.startsAt)),
+    createTextElement("span", "event-time", `${formatEventDate(event.startsAt)} · ${formatEventTime(event.startsAt)}`),
   );
   const title = createTextElement("h3", "event-title", event.title);
-  const location = createTextElement("p", "event-location", `${event.venue} · ${event.neighborhood}`);
+  const location = createTextElement("p", "event-location", [event.venue, event.neighborhood].filter(Boolean).join(" · "));
   const description = createTextElement("p", "event-description", event.description);
   const action = document.createElement("button");
   action.className = "event-action";
@@ -213,14 +229,14 @@ async function loadEvents(): Promise<void> {
   if (!eventGrid || !eventStatus || !demoNotice) return;
   if (!config.supabaseUrl || !config.anonKey) {
     demoNotice.hidden = false;
-    renderEvents(demoEvents);
+    renderEvents(demoEvents.filter((event) => new Date(event.startsAt).getTime() > Date.now()));
     return;
   }
 
   eventStatus.textContent = "Carregando eventos...";
   try {
     const query = new URLSearchParams({
-      select: "id,slug,title,venue,neighborhood,starts_at,ends_at,description,category",
+      select: "id,slug,title,venue,neighborhood,starts_at,ends_at,description,category,image_url",
       status: "eq.published",
       starts_at: `gt.${new Date().toISOString()}`,
       order: "starts_at.asc",
@@ -246,7 +262,7 @@ async function loadEvents(): Promise<void> {
         typeof item.slug !== "string" ||
         typeof item.title !== "string" ||
         typeof item.venue !== "string" ||
-        typeof item.neighborhood !== "string" ||
+        (item.neighborhood !== null && typeof item.neighborhood !== "string") ||
         typeof item.starts_at !== "string" ||
         typeof item.description !== "string" ||
         typeof item.category !== "string"
@@ -263,6 +279,7 @@ async function loadEvents(): Promise<void> {
         endsAt: typeof item.ends_at === "string" ? item.ends_at : null,
         description: item.description,
         category: item.category,
+        imageUrl: typeof item.image_url === "string" ? item.image_url : null,
       };
     });
     renderEvents(events);
