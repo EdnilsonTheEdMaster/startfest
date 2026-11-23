@@ -9,6 +9,7 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "devDependencies": {
+    "supabase": "^3.3.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
   }
